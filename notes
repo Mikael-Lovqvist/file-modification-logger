@@ -1,0 +1,51 @@
+Notes
+
+	experiment2.py provides a rather good start!
+	It will also detect previous snapshots.
+
+TODO
+
+	Now when we have abstracted file system events we need to act upon them.
+	So we need to have a snapshot store.
+
+
+DONE
+	We should redefine the application api a bit so we handle the following events
+
+		create directory
+		create file
+		delete directory
+		delete file
+		move directory
+		move file
+		update file
+
+Project aim
+
+	Provide a tool that can monitor file system activity in order to create snapshot deltas of a certain temporal frequency.
+
+Implementation
+
+	Third party library pyinotify is used to get the filesystem change events.
+	Events will be compared against a filter to decide if the files are being processed or not.
+	The size of the files will also be taken into account.
+
+
+Initial research
+
+	Initially this program will just create a whole bunch of snapshots so that we can experiment with how to diff them later.
+
+Potential issues
+
+	Problem: Non atomic saves could cause a file to be partially writen when we get the event (if the file is saved twice very fast, which is not very likely but good to be aware of).
+
+	Mitigations:
+		Have an file system idle timer to lessen the risk.
+		Make sure to gain exclusive rights while making snapshot (or making a copy to process).
+
+
+	Problem: Files grow beyond our set limits after we cleared the file for snapshotting.
+
+	Mitigation:
+		Check file size both when snapshotting and when filtering events.
+		Or only at snapshotting.
